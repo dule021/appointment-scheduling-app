@@ -1,11 +1,22 @@
 .scheduler-section {
   flex: 1;
+  max-width: 45%;
+}
+
+.scheduler-section__title {
+  margin-bottom: 1rem;
+}
+
+.scheduler-section__text {
+  font-size: 14px;
+  margin-bottom: 1rem;
 }
 
 .scheduler-form {
   display: flex;
   flex-direction: column;
-  row-gap: 1rem;
+  row-gap: 1.5rem;
+  margin: 2rem 0;
 }
 
 .scheduler-form__buttons-container {

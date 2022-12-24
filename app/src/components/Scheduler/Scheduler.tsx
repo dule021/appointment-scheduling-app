@@ -33,13 +33,17 @@ export const Scheduler = ({ addEntry }: SchedulerProps) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
     const formValues = Object.fromEntries(formData) as SchedulerFormData;
-    console.log(formValues);
+
     addEntry(formValues);
   };
 
   return (
     <div className="scheduler-section">
-      <h2>Scheduler</h2>
+      <h2 className="scheduler-section__title">Scheduler</h2>
+      <p className="scheduler-section__text">
+        Our new happy customers are arriving! Fill out the name, date and
+        service type and schedule a next unforgettable fluffy experience!
+      </p>
       <form
         id="scheduler-form"
         className="scheduler-form"
