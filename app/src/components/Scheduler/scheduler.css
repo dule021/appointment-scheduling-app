@@ -1,0 +1,15 @@
+.scheduler-section {
+  flex: 1;
+}
+
+.scheduler-form {
+  display: flex;
+  flex-direction: column;
+  row-gap: 1rem;
+}
+
+.scheduler-form__buttons-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
