@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 import { Header } from "./components/Header/Header";
 import { Scheduler, SchedulerFormData } from "./components/Scheduler/Scheduler";
@@ -10,22 +10,26 @@ import {
   remapEntries,
   todaysDate,
 } from "./components/Appointments/Appointments";
+import { incomingScheduledEntries } from "./mocks/scheduledEntries";
+import {
+  sortEntriesByCompleteness,
+  sortEntriesByNextId,
+} from "./utils/sortUtils";
+import { ScheduleEntry } from "./types";
 
-export type Service =
-  | "Grooming"
-  | "Full Body Shave"
-  | "Exotic Hairdo"
-  | "Nail Clipping";
+type IncomingEntry = {
+  date: string;
+  entries: ScheduleEntry[];
+};
 
-export type ScheduleEntry = {
-  id: string;
-  arrival: string;
-  owner: string;
-  puppyName: string;
-  requestedService: Service;
-  serviced: boolean;
-  prevEntryId: string | null;
-  nextEntryId: string | null;
+const normalizeEntries = (entries: IncomingEntry[]) => {
+  return entries.reduce(
+    (normalizedEntries, entry) => ({
+      ...normalizedEntries,
+      [entry.date]: sortEntriesByNextId([], entry.entries),
+    }),
+    {} as EntriesState
+  );
 };
 
 export type EntriesState = Record<string, ScheduleEntry[]>;
@@ -38,6 +42,21 @@ const App = () => {
 
   const [completedEntries, setCompletedEntries] =
     useState<EntriesState>(initialEntries);
+
+  useEffect(() => {
+    if (!incomingScheduledEntries) return;
+
+    const normalizedIncomingEntries = normalizeEntries([
+      incomingScheduledEntries,
+    ] as IncomingEntry[]);
+
+    const { scheduled, complete } = sortEntriesByCompleteness(
+      normalizedIncomingEntries
+    );
+
+    setScheduledEntries(scheduled);
+    setCompletedEntries(complete);
+  }, []);
 
   const placeNewEntryByScheduledTime = (
     existingEntries: ScheduleEntry[],

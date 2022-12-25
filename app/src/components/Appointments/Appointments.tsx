@@ -6,12 +6,14 @@ import {
 } from "@mui/material";
 import { useMemo, useState } from "react";
 import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
-import { EntriesState, ScheduleEntry } from "../../App";
+import { EntriesState } from "../../App";
 import { AppointmentCard } from "./AppointmentCard/AppointmentCard";
 import { MagnifyingGlass } from "phosphor-react";
 import dayjs from "dayjs";
+import { ScheduleEntry } from "../../types";
 
 import "./appointments.css";
+import { searchEntries } from "./utils";
 
 type AppontmentsProps = {
   scheduledEntries: EntriesState;
@@ -20,6 +22,8 @@ type AppontmentsProps = {
   completedEntries: EntriesState;
   markEntryAsCompleteForDate: (date: string) => (id: string) => void;
 };
+
+type AppointmentState = "scheduled" | "complete";
 
 export const remapEntries = (list: ScheduleEntry[]) =>
   list.map((entry, index) => {
@@ -86,9 +90,8 @@ export const Appointments = ({
 }: AppontmentsProps) => {
   const [searchValue, setSearchValue] = useState<string>("");
   const [currentDate, setCurrentDate] = useState<string>(todaysDate);
-  const [activeAppointments, setActiveAppointments] = useState<
-    "scheduled" | "complete"
-  >("scheduled");
+  const [activeAppointments, setActiveAppointments] =
+    useState<AppointmentState>("scheduled");
 
   const updateEntries = (entryList: ScheduleEntry[]) => {
     setScheduledEntries((entries: EntriesState) => ({
@@ -135,11 +138,7 @@ export const Appointments = ({
       return;
 
     return searchValue.length
-      ? scheduledEntries[currentDate].filter(
-          (entry) =>
-            entry.owner.toLowerCase().includes(searchValue) ||
-            entry.puppyName.toLowerCase().includes(searchValue)
-        )
+      ? searchEntries(scheduledEntries[currentDate], searchValue)
       : scheduledEntries[currentDate];
   }, [scheduledEntries, searchValue, currentDate]);
 
@@ -148,11 +147,7 @@ export const Appointments = ({
       return;
 
     return searchValue.length
-      ? completedEntries[currentDate].filter(
-          (entry) =>
-            entry.owner.toLowerCase().includes(searchValue) ||
-            entry.puppyName.toLowerCase().includes(searchValue)
-        )
+      ? searchEntries(completedEntries[currentDate], searchValue)
       : completedEntries[currentDate];
   }, [completedEntries, searchValue, currentDate]);
 

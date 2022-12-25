@@ -1,4 +1,3 @@
-import { ScheduleEntry } from "../../../App";
 import { useMemo } from "react";
 import dayjs from "dayjs";
 import { X, CheckCircle } from "phosphor-react";
@@ -8,6 +7,7 @@ import dog2 from "../../../assets/dog2.png";
 import dog3 from "../../../assets/dog3.png";
 
 import "./appointment-card.css";
+import { ScheduleEntry } from "../../../types";
 
 type AppointmentCardProps = {
   appointment: ScheduleEntry;

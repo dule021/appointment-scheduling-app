@@ -6,7 +6,7 @@ import {
   FormControl,
   Button,
 } from "@mui/material";
-import { Service } from "../../App";
+import { Service } from "../../types";
 
 import "./scheduler.css";
 
@@ -42,7 +42,7 @@ export const Scheduler = ({ addEntry }: SchedulerProps) => {
       <h2 className="scheduler-section__title">Scheduler</h2>
       <p className="scheduler-section__text">
         Our new happy customers are arriving! Fill out the name, date and
-        service type and schedule a next unforgettable fluffy experience!
+        service type and schedule the next unforgettable fluffy experience!
       </p>
       <form
         id="scheduler-form"
