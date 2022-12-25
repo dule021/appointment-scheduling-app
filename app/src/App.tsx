@@ -36,62 +36,67 @@ const App = () => {
   const [scheduledEntries, setScheduledEntries] =
     useState<EntriesState>(initialEntries);
 
-  console.log(scheduledEntries);
+  const [completedEntries, setCompletedEntries] =
+    useState<EntriesState>(initialEntries);
 
-  const addEntry = (entryData: SchedulerFormData) => {
+  const placeNewEntryByScheduledTime = (
+    existingEntries: ScheduleEntry[],
+    entryData: SchedulerFormData | ScheduleEntry,
+    markAsComplete?: boolean
+  ) => {
+    if (!existingEntries || !existingEntries.length) {
+      return [
+        {
+          ...entryData,
+          id: uuid(),
+          serviced: Boolean(markAsComplete),
+          prevEntryId: null,
+          nextEntryId: null,
+        },
+      ];
+    }
+
+    const newEntryTime = dayjs(entryData.arrival).unix();
+    const indexOfSmallerEntry = existingEntries.findIndex((entryItem) =>
+      entryItem.arrival === "custom"
+        ? false
+        : newEntryTime > dayjs(entryItem.arrival).unix()
+    );
+
+    if (indexOfSmallerEntry === -1) {
+      return [
+        ...existingEntries,
+        {
+          ...entryData,
+          id: uuid(),
+          serviced: Boolean(markAsComplete),
+          prevEntryId: null,
+          nextEntryId: null,
+        },
+      ];
+    }
+
+    return insertEntry(existingEntries, indexOfSmallerEntry, {
+      ...entryData,
+      id: uuid(),
+      serviced: Boolean(markAsComplete),
+      prevEntryId: null,
+      nextEntryId: null,
+    });
+  };
+
+  const addNewScheduledEntry = (entryData: SchedulerFormData) => {
     const entryDate = entryData.arrival.slice(
       0,
       entryData.arrival.indexOf("T")
     );
 
-    const placeNewEntryByScheduledTime = (existingEntries: ScheduleEntry[]) => {
-      if (!existingEntries || !existingEntries.length) {
-        return [
-          {
-            ...entryData,
-            id: uuid(),
-            serviced: false,
-            prevEntryId: null,
-            nextEntryId: null,
-          },
-        ];
-      }
-
-      const newEntryTime = dayjs(entryData.arrival).unix();
-      const indexOfSmallerEntry = existingEntries.findIndex((entryItem) =>
-        entryItem.arrival === "custom"
-          ? false
-          : newEntryTime > dayjs(entryItem.arrival).unix()
-      );
-      console.log(indexOfSmallerEntry, "index of smaller entry");
-      if (indexOfSmallerEntry === -1) {
-        return [
-          ...existingEntries,
-          {
-            ...entryData,
-            id: uuid(),
-            serviced: false,
-            prevEntryId: null,
-            nextEntryId: null,
-          },
-        ];
-      }
-
-      return insertEntry(existingEntries, indexOfSmallerEntry, {
-        ...entryData,
-        id: uuid(),
-        serviced: false,
-        prevEntryId: null,
-        nextEntryId: null,
-      });
-    };
-
-    console.log(entryDate);
-
     setScheduledEntries((currentEntries) => {
       const updatedEntries = placeNewEntryByScheduledTime(
-        currentEntries[entryDate]
+        currentEntries[entryDate],
+        entryData
       );
+
       return {
         ...currentEntries,
         [entryDate]: remapEntries(updatedEntries),
@@ -108,6 +113,32 @@ const App = () => {
     }));
   };
 
+  const markEntryAsCompleteForDate = (date: string) => (entryId: string) => {
+    const completedEntry = scheduledEntries[date].find(
+      (entry) => entry.id === entryId
+    )!;
+
+    setScheduledEntries((currentEntries) => ({
+      ...currentEntries,
+      [date]: remapEntries(
+        currentEntries[date].filter((entry) => entry.id !== entryId)
+      ),
+    }));
+
+    setCompletedEntries((currentEntries) => {
+      const updatedEntries = placeNewEntryByScheduledTime(
+        currentEntries[date],
+        completedEntry,
+        true
+      );
+
+      return {
+        ...currentEntries,
+        [date]: remapEntries(updatedEntries),
+      };
+    });
+  };
+
   return (
     <div className="app">
       <div className="app-wrapper">
@@ -117,8 +148,10 @@ const App = () => {
             scheduledEntries={scheduledEntries}
             setScheduledEntries={setScheduledEntries}
             removeEntryForDate={removeEntryForDate}
+            completedEntries={completedEntries}
+            markEntryAsCompleteForDate={markEntryAsCompleteForDate}
           />
-          <Scheduler addEntry={addEntry} />
+          <Scheduler addEntry={addNewScheduledEntry} />
         </main>
       </div>
     </div>

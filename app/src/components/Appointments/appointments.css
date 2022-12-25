@@ -7,6 +7,13 @@
   margin-bottom: 2rem;
 }
 
+.appointments-section__controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
 .appointments__date-picker {
   width: 50%;
   margin: 0.75rem 0;
@@ -16,5 +23,5 @@
   display: flex;
   flex-direction: column;
   row-gap: 1rem;
-  margin: 0.75rem 0;
+  margin: 1rem 0;
 }

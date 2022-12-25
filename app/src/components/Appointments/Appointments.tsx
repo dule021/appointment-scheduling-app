@@ -1,8 +1,14 @@
-import { TextField } from "@mui/material";
+import {
+  InputAdornment,
+  TextField,
+  ToggleButton,
+  ToggleButtonGroup,
+} from "@mui/material";
 import { useMemo, useState } from "react";
-import { DragDropContext, Droppable } from "react-beautiful-dnd";
+import { DragDropContext, Draggable, Droppable } from "react-beautiful-dnd";
 import { EntriesState, ScheduleEntry } from "../../App";
 import { AppointmentCard } from "./AppointmentCard/AppointmentCard";
+import { MagnifyingGlass } from "phosphor-react";
 import dayjs from "dayjs";
 
 import "./appointments.css";
@@ -11,6 +17,8 @@ type AppontmentsProps = {
   scheduledEntries: EntriesState;
   setScheduledEntries: React.Dispatch<React.SetStateAction<EntriesState>>;
   removeEntryForDate: (date: string) => (id: string) => void;
+  completedEntries: EntriesState;
+  markEntryAsCompleteForDate: (date: string) => (id: string) => void;
 };
 
 export const remapEntries = (list: ScheduleEntry[]) =>
@@ -73,8 +81,14 @@ export const Appointments = ({
   scheduledEntries,
   setScheduledEntries,
   removeEntryForDate,
+  completedEntries,
+  markEntryAsCompleteForDate,
 }: AppontmentsProps) => {
+  const [searchValue, setSearchValue] = useState<string>("");
   const [currentDate, setCurrentDate] = useState<string>(todaysDate);
+  const [activeAppointments, setActiveAppointments] = useState<
+    "scheduled" | "complete"
+  >("scheduled");
 
   const updateEntries = (entryList: ScheduleEntry[]) => {
     setScheduledEntries((entries: EntriesState) => ({
@@ -111,47 +125,132 @@ export const Appointments = ({
     [removeEntryForDate, currentDate]
   );
 
+  const onMarkAsComplete = useMemo(
+    () => markEntryAsCompleteForDate(currentDate),
+    [markEntryAsCompleteForDate, currentDate]
+  );
+
+  const scheduledAppointments = useMemo(() => {
+    if (!scheduledEntries[currentDate] || !scheduledEntries[currentDate].length)
+      return;
+
+    return searchValue.length
+      ? scheduledEntries[currentDate].filter(
+          (entry) =>
+            entry.owner.toLowerCase().includes(searchValue) ||
+            entry.puppyName.toLowerCase().includes(searchValue)
+        )
+      : scheduledEntries[currentDate];
+  }, [scheduledEntries, searchValue, currentDate]);
+
+  const completedAppointments = useMemo(() => {
+    if (!completedEntries[currentDate] || !completedEntries[currentDate].length)
+      return;
+
+    return searchValue.length
+      ? completedEntries[currentDate].filter(
+          (entry) =>
+            entry.owner.toLowerCase().includes(searchValue) ||
+            entry.puppyName.toLowerCase().includes(searchValue)
+        )
+      : completedEntries[currentDate];
+  }, [completedEntries, searchValue, currentDate]);
+
   return (
     <div className="appointments-section">
       <h2 className="appointments-section__title">Appointments</h2>
-      <TextField
-        id="currentDate"
-        label="Current date"
-        type="date"
-        value={currentDate}
-        onChange={(e) => setCurrentDate(e.target.value)}
-        className="appointments__date-picker"
-        InputLabelProps={{
-          shrink: true,
-        }}
-      />
-      <DragDropContext onDragEnd={onDragEnd}>
-        <Droppable droppableId="list">
-          {(provided) => (
-            <div
-              className="appointments-list"
-              ref={provided.innerRef}
-              {...provided.droppableProps}
-            >
-              {scheduledEntries[currentDate] &&
-              scheduledEntries[currentDate].length ? (
-                scheduledEntries[currentDate].map((entry, index) => (
-                  <AppointmentCard
-                    appointment={entry}
-                    onRemoveEntry={onRemoveEntry}
-                    index={index}
-                    key={entry.id}
-                  />
-                ))
-              ) : (
-                <div>No appointments for the selected date.</div>
-              )}
-
-              {provided.placeholder}
-            </div>
+      <div className="appointments-section__controls">
+        <TextField
+          id="currentDate"
+          label="Current date"
+          type="date"
+          value={currentDate}
+          onChange={(e) => setCurrentDate(e.target.value)}
+          className="appointments__date-picker"
+          size="small"
+          InputLabelProps={{
+            shrink: true,
+          }}
+        />
+        <TextField
+          id="search"
+          label="Search by owner or puppy name"
+          value={searchValue}
+          size="small"
+          onChange={(e) => setSearchValue(e.target.value)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <MagnifyingGlass size={16} />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </div>
+      <ToggleButtonGroup
+        value={activeAppointments}
+        exclusive
+        size="small"
+        onChange={(e, value) => setActiveAppointments(value)}
+      >
+        <ToggleButton value="scheduled">Scheduled</ToggleButton>
+        <ToggleButton value="complete">Complete</ToggleButton>
+      </ToggleButtonGroup>
+      {activeAppointments === "complete" ? (
+        <div className="appointments-list">
+          {completedAppointments ? (
+            completedAppointments.map((entry, index) => (
+              <AppointmentCard
+                appointment={entry}
+                onMarkAsComplete={() => {}}
+                key={entry.id}
+              />
+            ))
+          ) : (
+            <div>No completed appointments for the selected date.</div>
           )}
-        </Droppable>
-      </DragDropContext>
+        </div>
+      ) : (
+        <DragDropContext onDragEnd={onDragEnd}>
+          <Droppable droppableId="list">
+            {(provided) => (
+              <div
+                className="appointments-list"
+                ref={provided.innerRef}
+                {...provided.droppableProps}
+              >
+                {scheduledAppointments ? (
+                  scheduledAppointments.map((entry, index) => (
+                    <Draggable
+                      draggableId={entry.id}
+                      index={index}
+                      key={entry.id}
+                    >
+                      {(provided) => (
+                        <div
+                          ref={provided.innerRef}
+                          {...provided.draggableProps}
+                          {...provided.dragHandleProps}
+                        >
+                          <AppointmentCard
+                            appointment={entry}
+                            onRemoveEntry={onRemoveEntry}
+                            onMarkAsComplete={onMarkAsComplete}
+                          />
+                        </div>
+                      )}
+                    </Draggable>
+                  ))
+                ) : (
+                  <div>No scheduled appointments for the selected date.</div>
+                )}
+
+                {provided.placeholder}
+              </div>
+            )}
+          </Droppable>
+        </DragDropContext>
+      )}
     </div>
   );
 };

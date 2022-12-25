@@ -4,6 +4,11 @@
   align-items: center;
   padding: 1rem;
   background-color: goldenrod;
+  border: 1px solid goldenrod;
+}
+
+.appointment-card--complete {
+  background-color: transparent;
 }
 
 .appointment-card__avatar {
@@ -31,4 +36,10 @@
   position: relative;
   top: -0.25rem;
   right: -0.25rem;
+}
+
+.appointment-card__complete-mark {
+  display: flex;
+  font-size: 12px;
+  align-items: center;
 }
