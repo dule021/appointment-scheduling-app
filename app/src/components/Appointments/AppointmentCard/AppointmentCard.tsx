@@ -37,6 +37,7 @@ export const AppointmentCard = ({
       className={`appointment-card ${
         appointment.serviced ? "appointment-card--complete" : ""
       } ${Boolean(isFirst) ? "appointment-card--first" : ""}`}
+      data-testid="appointment-card"
     >
       <div className="appointment-card__avatar">
         <img src={image} alt="Dog avatar" />

@@ -59,6 +59,7 @@ export const Scheduler = ({ addEntry }: SchedulerProps) => {
           InputLabelProps={{
             shrink: true,
           }}
+          placeholder="Arrival date and time"
         />
         <FormControl>
           <TextField
@@ -67,6 +68,7 @@ export const Scheduler = ({ addEntry }: SchedulerProps) => {
             required
             variant="outlined"
             label="Owner"
+            placeholder="Owner"
           />
         </FormControl>
         <TextField
@@ -96,7 +98,12 @@ export const Scheduler = ({ addEntry }: SchedulerProps) => {
           <Button type="reset" variant="text">
             Clear
           </Button>
-          <Button type="submit" form="scheduler-form" variant="contained">
+          <Button
+            type="submit"
+            form="scheduler-form"
+            variant="contained"
+            data-testid="scheduler__submit-button"
+          >
             Schedule Appointment
           </Button>
         </div>
