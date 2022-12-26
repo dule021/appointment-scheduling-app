@@ -1,6 +1,10 @@
 .appointments-section {
   flex: 1;
-  max-width: 45%;
+  max-width: 55%;
+  background-color: var(--mui-palette-common-white);
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  min-height: 543px;
 }
 
 .appointments-section__title {

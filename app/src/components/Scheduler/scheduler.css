@@ -1,10 +1,14 @@
 .scheduler-section {
   flex: 1;
-  max-width: 45%;
+  max-width: 35%;
+  background-color: var(--mui-palette-common-white);
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
 }
 
 .scheduler-section__title {
   margin-bottom: 1rem;
+  color: var(--mui-palette-primary-main);
 }
 
 .scheduler-section__text {

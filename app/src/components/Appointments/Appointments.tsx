@@ -231,6 +231,7 @@ export const Appointments = ({
                             appointment={entry}
                             onRemoveEntry={onRemoveEntry}
                             onMarkAsComplete={onMarkAsComplete}
+                            isFirst={index === 0}
                           />
                         </div>
                       )}

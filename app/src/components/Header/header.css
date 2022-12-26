@@ -2,13 +2,17 @@
   display: flex;
   align-items: center;
   max-width: 95%;
-  margin: 0 auto 2rem;
-  padding: 0.25rem 0;
+  margin: 1rem auto 2rem;
+  background: var(--mui-palette-common-white);
+  border-radius: 0.5rem;
+  position: relative;
 }
 
 .header__logo {
-  max-width: 3rem;
-  margin-right: 1rem;
+  max-width: 4.25rem;
+  position: absolute;
+  top: -12px;
+  left: -24px;
 }
 
 .header__logo img {
@@ -17,10 +21,11 @@
 
 .header-title {
   font-size: 2rem;
-  color: goldenrod;
+  color: var(--mui-palette-primary-light);
+  margin-left: 4rem;
 }
 
 .header-title__secondary {
-  font-size: 24px;
-  color: goldenrod;
+  font-size: 1rem;
+  font-weight: 400;
 }

@@ -55,6 +55,7 @@ export const Scheduler = ({ addEntry }: SchedulerProps) => {
           name="arrival"
           label="Arrival date and time"
           type="datetime-local"
+          required
           InputLabelProps={{
             shrink: true,
           }}

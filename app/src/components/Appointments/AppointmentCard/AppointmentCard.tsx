@@ -13,6 +13,7 @@ type AppointmentCardProps = {
   appointment: ScheduleEntry;
   onRemoveEntry?: (id: string) => void;
   onMarkAsComplete: (id: string) => void;
+  isFirst?: boolean;
 };
 
 const images = [dog1, dog2, dog3];
@@ -25,6 +26,7 @@ export const AppointmentCard = ({
   appointment,
   onRemoveEntry,
   onMarkAsComplete,
+  isFirst,
 }: AppointmentCardProps) => {
   const { owner, puppyName, requestedService, arrival } = appointment;
 
@@ -34,7 +36,7 @@ export const AppointmentCard = ({
     <div
       className={`appointment-card ${
         appointment.serviced ? "appointment-card--complete" : ""
-      }`}
+      } ${Boolean(isFirst) ? "appointment-card--first" : ""}`}
     >
       <div className="appointment-card__avatar">
         <img src={image} alt="Dog avatar" />
@@ -53,19 +55,27 @@ export const AppointmentCard = ({
         <span>Puppy name : {puppyName}</span>
         <span>Requested service : {requestedService}</span>
       </div>
-      <div className="appointment-card__delete-button">
-        {onRemoveEntry && (
-          <IconButton onClick={() => onRemoveEntry(appointment.id)}>
+      {onRemoveEntry && (
+        <div className="appointment-card__delete-button">
+          <IconButton
+            color="warning"
+            onClick={() => onRemoveEntry(appointment.id)}
+          >
             <X weight="fill" size={24} />
           </IconButton>
-        )}
+        </div>
+      )}
+      <div className="appointment-card__complete-button">
         {appointment.serviced ? (
-          <div className="appointment-card__complete-mark">
-            <CheckCircle weight="fill" size={24} />
-            <span>Complete</span>
-          </div>
+          <>
+            <CheckCircle weight="fill" size={16} />
+            <span className="appointment-card__complete-text">Complete</span>
+          </>
         ) : (
-          <IconButton onClick={() => onMarkAsComplete(appointment.id)}>
+          <IconButton
+            color="primary"
+            onClick={() => onMarkAsComplete(appointment.id)}
+          >
             <CheckCircle weight="fill" size={24} />
           </IconButton>
         )}

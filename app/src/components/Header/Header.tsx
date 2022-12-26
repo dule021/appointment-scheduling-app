@@ -7,7 +7,7 @@ export const Header = () => (
       <img src={dogLogo} alt="main logo" />
     </div>
     <h1 className="header-title">
-      Fluffy Tail <span className="header-title__secondary">Puppy Spa</span>
+      Fluffy tail <span className="header-title__secondary">Puppy Spa</span>
     </h1>
   </header>
 );
