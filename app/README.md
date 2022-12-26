@@ -1,6 +1,6 @@
-# Getting Started with Create React App
+# Puppy Spa - An Appointment Scheduling app exercise
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Pure frontend application handling appointment scheduling, calendar day-to-day appointment tracking, search and more.
 
 ## Available Scripts
 
